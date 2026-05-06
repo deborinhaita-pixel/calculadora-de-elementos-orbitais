@@ -10,6 +10,7 @@ def velocidade_orbital (s: float, k: float) -> float:
     return vo
 
 def transf_de_hohmann (r1: float, r2: float) -> float:
+    at = (r1 + r2) / 2
     v1 = velocidade_orbital(r1, r1)
     vtransf1 = velocidade_orbital(at, r1)
     v2 = velocidade_orbital(r2, r2)
