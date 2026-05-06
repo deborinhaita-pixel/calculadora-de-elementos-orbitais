@@ -39,9 +39,14 @@ def raio_do_apogeu(a: float, e: float) -> float:
     ra = a * (1 + e)
     return ra
 
-def calculadora_elementos_orbitais (Em: float, a: float, vetE: np.ndarray, e: float,  h: np.ndarray, vetR: np.ndarray, vetV: np.ndarray):
+def calculadora_elementos_orbitais (vetr: np.ndarray, vetv: np.ndarray):
 
-    if np.linalg.norm(vetR) > rterra:
+    if np.linalg.norm(vetr) > rterra:
+        h = np.cross(vetr, vetv) #momento angular específico
+        Em = ((np.linalg.norm(vetv)**2/2) - (p/np.linalg.norm(vetr))) #energia mecânica específica
+        a = -p / (2 * Em) #semi-eixo maior
+        vetE = ((np.cross(vetv, h)/p) - (vetr/np.linalg.norm(vetr))) #vetor E
+        e = np.linalg.norm(vetE) #excentricidade
         print(f"\nEnergia mecânica específica (Em) = {Em} km²/s²")
         print(f"Vetor E = {vetE}")
         print(f"Raio do perigeu (rp) = {raio_do_perigeu(a, e)} km")
@@ -105,4 +110,4 @@ def calculadora_elementos_orbitais (Em: float, a: float, vetE: np.ndarray, e: fl
             print("Órbita não classificada.") #parabólica ou hiperbólica
     
     else:
-        print("Não é possível que o V/E esteja em órbita.")
+        print("\nNão é possível que o V/E esteja em órbita.")

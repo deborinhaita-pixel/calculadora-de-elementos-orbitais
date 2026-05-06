@@ -14,12 +14,7 @@ while True:
             print("\nDigite as componentes do vetor velocidade em km/s:")
             vetv = np.array([float(input("i: ")), float(input("J: ")), float(input("K: "))])
 
-            h = np.cross(vetr, vetv) #momento angular específico
-            Em = ((np.linalg.norm(vetv)**2/2) - (p/np.linalg.norm(vetr))) #energia mecânica específica
-            a = -p / (2 * Em) #semi-eixo maior
-            vetE = ((np.cross(vetv, h)/p) - (vetr/np.linalg.norm(vetr))) #vetor E
-            e = np.linalg.norm(vetE) #excentricidade
-            calculadora_elementos_orbitais(Em, a, vetE, e, h, vetr, vetv)
+            calculadora_elementos_orbitais(vetr, vetv)
             break
 
     elif x == 2:
