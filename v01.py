@@ -1,97 +1,153 @@
 import numpy as np
 
-print("Digite as componentes do vetor posição em km:")
+print("Digite as componentes do vetor posição em km:\n")
 vetR = np.array([float(input("i: ")), float(input("J: ")), float(input("K: "))])
-print("Digite as componentes do vetor velocidade em km/s:")
+print("\n")
+print("Digite as componentes do vetor velocidade em km/s:\n")
 vetV = np.array([float(input("i: ")), float(input("J: ")), float(input("K: "))])
 
 p = 3.986 * (10**5) #parâmetro gravitacional em km^3/s^2
 RTerra = 6378.14 #km
+
 versori = np.array([1, 0, 0])
 versork = np.array([0, 0, 1])
-h = np.cross(vetR, vetV) #momento angular específico
-Em = ((np.linalg.norm(vetV)**2/2) - (p/np.linalg.norm(vetR))) #energia mecânica específica
-a = -p / (2 * Em) #semi-eixo maior
-vetE = ((np.cross(vetV, h)/p) - (vetR/np.linalg.norm(vetR))) #vetor E
-e = np.linalg.norm(vetE) #excentricidade
 
-def inclinacao(versork: np.ndarray, h: np.ndarray) -> float:
-    i = np.degrees(np.arccos((versork.dot(h))/np.linalg.norm(h)))
-    return i
+#np.array avisa para o python que a lista de entrada é uma matriz
 
-def nodo (versork: np.ndarray, h: np.ndarray) -> np.ndarray:
-    n = np.cross(versork, h)
-    return n
+def calculadora_elementos_orbitais(vetR: np.ndarray, vetV: np.ndarray) -> tuple:
+    #np.arry é o comando para transformar em matriz e np.ndarray é para indicar que a variável é uma matriz
+    #tuple é um pacotinho de valores
+    print("\n")
+    if np.linalg.norm(vetR) > RTerra:
+        print(f"Módulo da posição (R) = {np.linalg.norm(vetR)} km")
+        print("Como R > Raio da Terra, podemos concluir que o V/E está em órbita.\n")
 
-def ascencao_reta_do_nodo_ascendente(versori: np.ndarray, nodo: np.ndarray) -> float:
-    Ω = np.degrees(np.arccos((versori.dot(nodo))/np.linalg.norm(nodo)))
-    if nodo[1] < 0:
-        Ω = 360 - Ω
-    return Ω
+        Em = ((np.linalg.norm(vetV)**2)/2) - (p/np.linalg.norm(vetR)) #energia mecânica específica
+        if Em > 0:
+            print(f"Energia mecânica específica (Em) = {Em}")
+            print("Como Em > 0, a órbita é hiperbólica.\n")
+        elif Em == 0:
+            print(f"Energia mecânica específica (Em) = {Em}")
+            print("Como Em = 0, a órbita é parabólica.\n")
+        else:
+            print(f"Energia mecânica específica (Em) = {Em}")
+            print("Como Em < 0, a órbita é circular ou elíptica.\n")
 
-def argumento_do_perigeu (nodo: np.ndarray, vetE: np.ndarray, e: float) -> float:
-    ω = np.degrees(np.arccos((nodo.dot(vetE))/(np.linalg.norm(nodo)*e)))
-    if vetE[2] < 0:
-        ω = 360 - ω
-    return ω
+        a = -p/(2*Em) #semi-eixo maior
+        print(f"Semi-eixo maior (a) = {a} km\n")
 
-def anomalia_verdadeira(vetE: np.ndarray, vetR: np.ndarray, e: float, vetV: np.ndarray) -> float:
-    v = np.degrees(np.arccos((vetE.dot(vetR))/(e*np.linalg.norm(vetR))))
-    if vetR.dot(vetV) < 0:
-        v = 360 - v
-    elif vetR.dot(vetV) == 0 and vetE.dot(vetR) > 0:
-        v = 0
-    elif vetR.dot(vetV) == 0 and vetE.dot(vetR) < 0:
-        v = 180
-    return v
+        h = np.cross(vetR, vetV) #momento angular específico
+        print(f"Vetor momento ângular específico (h) = {h} km²/s\n")
 
-def calculadora_elementos_orbitais (Em: float, a: float, vetE: np.ndarray, e: float, vetR: np.ndarray, vetV: np.ndarray):
+        vetE = ((np.cross(vetV, h)/p) - (vetR/np.linalg.norm(vetR))) #vetor E
+        print(f"Vetor E = {vetE}")
+        e = np.linalg.norm(vetE) #excentricidade
+        print(f"Excentricidade (e) = {np.linalg.norm(vetE)}\n")
+        if e == 0:
+            print("Como e = 0, a órbita é circular.\n")
+        elif 0 < e < 1:
+            print("Como 0 < e < 1, a órbita é elíptica.\n")
+        elif e == 1:
+            print("Como e = 1, a órbita é parabólica.\n")
+        elif e > 1:
+            print("Como e > 1, a órbita é hiperbólica.\n")
 
-    print(f"A energia mecânica específica (Em) = {Em} km²/s²")
-    print(f"O semi-eixo maior (a) = {a} km")
-    print(f"O vetor E = {vetE}")
-    if e == 0:
-        print(f"Como e = {e}, a órbita é circular.")
-    elif 0 < e < 1:
-        print(f"Como e = {e}, a órbita é elíptica.")
-    elif e == 1:
-        print(f"Como e = {e}, a órbita é parabólica.")
-    elif e > 1:
-        print(f"Como e = {e}, a órbita é hiperbólica.")
-    print(f"O vetor momento angular específico (h) = {h} km²/s")
-    print(f"A inclinação (i) = {inclinacao(versork, h)}°")
+        i = np.degrees(np.arccos((versork.dot(h))/np.linalg.norm(h))) #inclinação
+        print(f"Inclinação (i) = {i}°\n")
+        #o python devolve i em radianos
+        #np.degrees converte para graus
 
-    #Caso 1: Órbita circular e equatorial
-    #Não possui perigeu e não possui nodo
-    #Argumento do perigeu (ω), ascensão reta do nodo ascendente (Ω) e anomalia verdadeira (ν) indefinidos
-    if e == 0 and (inclinacao(versork, h) == 0 or inclinacao(versork, h) == 180):
-        l = () #longitude verdadeira
-        print(f"Longitude verdadeira (l) = {l}°")
+        #órbita circular e equatorial
+        #problemas: ω, Ω e ν são indefinidos pois não possui perigeu e nem linha dos nodos
+        #o que é possível calcular? l (longitude verdadeira)
+        #longitude verdadeira (l) é o ângulo medido desde a direção principal até a posição do V/E.  
+        if e == 0 and (i == 0 or i == 180):
+            print(f"Como e = {e} e i = {i}°, a órbita é simultaneamente circular equatorial.")
+            print("Como consequência, não possui argumento do perigeu (ω), ascensão reta do nodo ascendente (Ω) e nem anomalia verdadeira (ν).")
+            print("Nesse caso, Utilizaremos o elemento orbital alternativo l, chamado de longitude verdadeira.")
+            l = () #longitude verdadeira
+            print(f"Longitude verdadeira (l) = {l}°")
+        
+        #órbita circular e inclinada
+        #problemas: ω e ν são indefinidos pois não possui perigeu
+        #o que é possível calcular? n, Ω e u(argumento de latitude)
+        #argumento de latitude (u) é o ângulo medido desde o nodo ascendente até a posição do veículo espacial (V/E).
+        elif e == 0 and (i !=0 and i != 180):
+            print("Como e = 0, a órbita é circular e, portanto, a anomalia verdadeira (v) e o argumento do perigeu (ω) são indefinidos.")
+            print("Nesse caso, utilizamos o elemento orbital alternativo u, chamado de argumento de latitude.")
+            u = () #argumento de latitude
+            print(f"Argumento de latitude (u) = {u}°\n")
 
-    #Caso 2: Órbita circular e inclinada
-    #Não possui perigeu
-    #Argumento do perigeu (ω) e anomalia verdadeira (ν) indefinidos
-    elif e == 0 and (inclinacao(versork, h) != 0 and inclinacao(versork, h) != 180):
-        u = () #argumento de latitude
-        print(f"Argumento de latitude (u) = {u}°\n")
-        print(f"O vetor nodo (n) = {nodo(versork, h)}")
-        print(f"A ascensão reta do nodo ascendente (Ω) = {ascencao_reta_do_nodo_ascendente(versori, nodo(versork, h))}°")
+            n = np.cross(versork, h) #vetor nodo
+            print(f"Vetor nodo (n) = {n}")
+            print(f"Módulo do vetor nodo (n) = {np.linalg.norm(n)}\n")
+
+            Ω = np.degrees(np.arccos((versori.dot(n))/np.linalg.norm(n))) #ascenção reta do nodo ascendente
+            if n[1] < 0:
+                Ω = 360 - Ω
+            print(f"Longitude do nodo ascendente (Ω) = {Ω}°\n")
+
+        #órbita não circular e equatorial
+        #problemas: ω e Ω são indefinidos pois não possui linha dos nodos
+        #o que é possível calcular? ν e Π (longitude do perigeu)
+        #longitude do perigeu (Π) é o ângulo medido desde a direção principal até o perigeu.
+        elif e != 0 and (i == 0 or i == 180):
+            print("Como a órbita é elíptica e não possui inclinação, o argumento do perigeu (ω) e a ascenção reta do nodo ascendente (Ω) é indefinida.")
+            print("Nesse caso, utilizamos o elemento orbital alternativo Π, chamado de longitude do perigeu.")
+            Π = () #longitude do perigeu
+            print(f"longitude do perigeu (Π) = {Π}°\n")
+
+            ν = np.degrees(np.arccos((vetE.dot(vetR))/(np.linalg.norm(vetE)*np.linalg.norm(vetR)))) #anomalia verdadeira
+            if vetR.dot(vetV) > 0:
+                print(f"Anomalia verdadeira (ν) = {ν}°")
+            elif vetR.dot(vetV) < 0:
+                ν = 360 - ν
+                print(f"Anomalia verdadeira (ν) = {ν}°")
+            elif vetR.dot(vetV) == 0 and vetE.dot(vetR) > 0:
+                ν = 0
+                print(f"Anomalia verdadeira (ν) = {ν}°")
+                print("O V/E está no perigeu.\n")
+            elif vetR.dot(vetV) == 0 and vetE.dot(vetR) < 0:
+                ν = 180
+                print(f"Anomalia verdadeira (ν) = {ν}°")
+                print("O V/E está no apogeu.\n")
     
-    #Caso 3: Órbita elíptica e equatorial
-    #Não possui nodo
-    #Argumento do perigeu (ω) e ascensão reta do nodo ascendente (Ω) indefinidos
-    elif 0 < e < 1 and (inclinacao(versork, h) == 0 or inclinacao(versork, h) == 180):
-        Π = () #longitude do perigeu
-        print(f"longitude do perigeu (Π) = {Π}°\n")
-        print(f"A anomalia verdadeira (ν) = {anomalia_verdadeira(vetE, vetR, e, vetV)}°")
-    
-    #Caso 4: Órbita elíptica e inclinada
-    elif 0 < e < 1 and (inclinacao(versork, h) != 0 and inclinacao(versork, h) != 180):
-        print(f"O argumento do perigeu (ω) = {argumento_do_perigeu(nodo(versork, h), vetE, e)}°")
-        print(f"A ascensão reta do nodo ascendente (Ω) = {ascencao_reta_do_nodo_ascendente(versori, nodo(versork, h))}°")
-        print(f"A anomalia verdadeira (ν) = {anomalia_verdadeira(vetE, vetR, e, vetV)}°")
-    
+        #órbita não circular e inclinada
+        elif e != 0 and (i != 0 and i != 180):
+            n = np.cross(versork, h) #vetor nodo
+            print(f"Vetor nodo (n) = {n}")
+            print(f"Módulo do vetor nodo (n) = {np.linalg.norm(n)}\n")
+
+            Ω = np.degrees(np.arccos((versori.dot(n))/np.linalg.norm(n))) #ascençõ reta do nodo ascendente
+            if n[1] < 0:
+                Ω = 360 - Ω
+            print(f"Longitude do nodo ascendente (Ω) = {Ω}°\n")
+
+            ω = np.degrees(np.arccos((n.dot(vetE))/(np.linalg.norm(n)*np.linalg.norm(vetE)))) #argumento do perigeu
+            if vetE[2] < 0:
+                ω = 360 - ω
+            print(f"Argumento do perigeu (ω) = {ω}°\n")
+
+            ν = np.degrees(np.arccos((vetE.dot(vetR))/(np.linalg.norm(vetE)*np.linalg.norm(vetR)))) #anomalia verdadeira
+
+            if vetR.dot(vetV) > 0:
+                print(f"Anomalia verdadeira (ν) = {ν}°")
+            elif vetR.dot(vetV) < 0:
+                ν = 360 - ν
+                print(f"Anomalia verdadeira (ν) = {ν}°")
+            elif vetR.dot(vetV) == 0 and vetE.dot(vetR) > 0:
+                ν = 0
+                print(f"Anomalia verdadeira (ν) = {ν}°")
+                print("O V/E está no perigeu.\n")
+            elif vetR.dot(vetV) == 0 and vetE.dot(vetR) < 0:
+                ν = 180
+                print(f"Anomalia verdadeira (ν) = {ν}°")
+                print("O V/E está no apogeu.\n")
+
     else:
-        print("Órbita não classificada.") #parabólica ou hiperbólica
+        print(f"O módulo do vetor posição é {np.linalg.norm(vetR)} km, ou seja, menor ou igual ao raio da Terra (6378.14 km).")
+        print("Então, não é possível que o V/E esteja em órbita.\n")
+    
+    return
 
-calculadora_elementos_orbitais(Em, a, vetE, e, vetR, vetV)
+calculadora_elementos_orbitais(vetR, vetV)
