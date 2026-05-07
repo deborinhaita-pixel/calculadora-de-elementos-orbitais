@@ -98,13 +98,13 @@ def calculadora_elementos_orbitais (vetr: np.ndarray, vetv: np.ndarray):
         elif 0 < e < 1 and (np.isclose(inclinacao(versork, h), 0) or np.isclose(inclinacao(versork, h), 180)):
             Π = () #longitude do perigeu
             print(f" - Longitude do perigeu (Π) = {Π}°")
-            print(f" - Anomalia verdadeira (ν) = {anomalia_verdadeira(vetE, vetR, e, vetV)}°")
+            print(f" - Anomalia verdadeira (ν) = {anomalia_verdadeira(vetE, vetr, e, vetv)}°")
         
         #Caso 4: Órbita elíptica e inclinada
-        elif 0 < e < 1 and (not np.isclose(inclinacao(versork, h), 0) and not np.isclose(inclinacao(versork, h), 180)):
+        elif 0 < e < 1 and (not np.isclose(inclinacao(versork, h), 0) and  (not np.isclose(inclinacao(versork, h), 180))):
             print(f" - Argumento do perigeu (ω) = {argumento_do_perigeu(nodo(versork, h), vetE, e)}°")
             print(f" - Ascensão reta do nodo ascendente (Ω) = {ascencao_reta_do_nodo_ascendente(versori, nodo(versork, h))}°")
-            print(f" - Anomalia verdadeira (ν) = {anomalia_verdadeira(vetE, vetR, e, vetV)}°")
+            print(f" - Anomalia verdadeira (ν) = {anomalia_verdadeira(vetE, vetr, e, vetv)}°")
         
         else:
             print("Órbita não classificada.") #parabólica ou hiperbólica

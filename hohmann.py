@@ -18,4 +18,4 @@ def transf_de_hohmann (r1: float, r2: float) -> float:
     t = np.pi * np.sqrt((at**3)/p) #tempo da transferência de Hohmann
     Δv1 = abs(vtransf1 - v1) #abs é módulo
     Δv2 = abs(v2 - vtransf2)
-    return Δv1, Δv2, t
+    return at, v1, vtransf1, v2, vtransf2, Δv1, Δv2, t
