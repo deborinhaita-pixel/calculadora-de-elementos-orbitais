@@ -43,7 +43,7 @@ while True:
         i2 = float(input("\nDigite a inclinação da órbita final: "))
         Δi = abs(i1 - i2)
 
-        print(f"{comparar_eficiencia_para_manobras_orbitais (r1, r2, Δi)}")
+        comparar_eficiencia_para_manobras_orbitais (r1, r2, Δi)
     
     elif x == 4:
         print("\nPrograma encerrado.")
